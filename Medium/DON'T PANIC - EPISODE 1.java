@@ -13,73 +13,26 @@ class Player {
         int nbAdditionalElevators = in.nextInt(); // ignore (always zero)
         int nbElevators = in.nextInt(); // number of elevators
         
-        int epArr[] = new int[nbElevators+1]; 
-        
+        HashMap<Integer, Integer> elevators = new HashMap<Integer, Integer>(nbElevators);
+        elevators.put(exitFloor, exitPos);
         for (int i = 0; i < nbElevators; i++) {
-            epArr[in.nextInt()]=in.nextInt();
-        }  
-        
-        epArr[epArr.length-1]=exitPos;
-        
-        int round=1;
-        int nbClones=0;
-        boolean canblock=true;
-        int prevFloor=0;
-        
+            elevators.put(in.nextInt(), in.nextInt());
+        }
+
         // game loop
         while (true) {
             int cloneFloor = in.nextInt(); // floor of the leading clone
-            int clonePos = in.nextInt(); // position of the leading clone on its floor    
-            String direction = in.next(); // direction of the leading clone: LEFT or RIGHT
+            int clonePos = in.nextInt(); // position of the leading clone on its floor
+            String dir = in.next(); // direction of the leading clone: LEFT or RIGHT
             
-            if(prevFloor!=cloneFloor){
-                canblock=true;
+            if ((dir.equals("LEFT") 
+            && elevators.get(cloneFloor) > clonePos) || (dir.equals("RIGHT") 
+            && cloneFloor >= 0 
+            && elevators.get(cloneFloor) < clonePos)) {
+                System.out.println("BLOCK");
+            } else {
+                System.out.println("WAIT"); // action: WAIT or BLOCK
             }
-            
-            //spawing time 1,4,7,10,13
-            if((round-1)%3==0){
-               nbClones++;             
-            }            
-            
-            //debug
-            for(int i=0;i<epArr.length;i++){
-                System.err.print(epArr[i]+" ");
-            }
-            System.err.println("\nclonePos: "+clonePos);
-            System.err.println("nbClones: "+nbClones);
-            
-            if (nbFloors==1){
-                if(clonePos==width-1 || clonePos==0){
-                    System.out.println("BLOCK");
-                }else{
-                    System.out.println("WAIT");
-                } 
-            }else if(nbClones>=2){
-                if(direction.equals("LEFT")){
-                    if(epArr[cloneFloor]>clonePos && canblock){
-                        System.out.println("BLOCK");
-                        canblock=false;
-                    }else{
-                        System.out.println("WAIT");
-                    }
-                }else if(direction.equals("RIGHT")){
-                    if(epArr[cloneFloor]<clonePos && canblock){
-                        System.out.println("BLOCK");
-                        canblock=false;
-                    }else{
-                        System.out.println("WAIT");
-                    }
-                }
-            }else{
-                if(clonePos==width-1 || clonePos==0){
-                    System.out.println("BLOCK");
-                    canblock=false;
-                }else{
-                    System.out.println("WAIT");
-                } 
-            }
-            
-            round++;
         }
     }
 }
